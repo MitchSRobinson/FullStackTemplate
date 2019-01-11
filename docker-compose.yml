@@ -1,0 +1,63 @@
+version: '3'
+
+
+services:
+
+  db:
+    image: mysql
+    container_name: template-db
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    volumes:
+      - mysqldata:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: template
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+
+  api:
+    build: ./template-api
+    container_name: template-api
+    hostname: api
+    restart: unless-stopped
+    stdin_open: true
+    volumes:
+      - ./template-api:/app
+    ports:
+      - "3001:3001"
+    environment:
+      - DB_HOST=template-db
+      - DB_USER=user
+      - DB_PASS=password
+      - DB_NAME=template
+    depends_on:
+      - db
+
+  web:
+    build: ./template-app
+    container_name: template-web
+    hostname: web
+    restart: always
+    volumes:
+      - ./template-app/template-app/:/usr/app
+    ports:
+      - "4200:4200"
+    depends_on:
+      - api
+
+  nginx:
+    build: ./nginx
+    container_name: nginx
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+      - web
+
+volumes:
+  mysqldata:
+    external: {name: template-mysqldata}

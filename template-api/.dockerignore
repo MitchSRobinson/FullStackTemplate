@@ -1,0 +1,5 @@
+.gcloudignore
+.gitignore
+app.yaml
+cloudbuild.yaml
+README.md

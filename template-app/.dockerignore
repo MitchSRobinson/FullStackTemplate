@@ -1,0 +1,8 @@
+.dockerignore
+./log
+./tmp
+./template/package.lock.json
+./template/npm-debug.log
+./template/www
+./template/e2e
+./template/node_modules
